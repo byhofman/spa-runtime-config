@@ -2,6 +2,7 @@
   "name": "@byhofman/spa-runtime-config",
   "version": "0.1.0",
   "type": "module",
+  "license": "MIT",
   "files": ["dist"],
   "main": "./dist/spa-runtime-config.js",
   "module": "./dist/spa-runtime-config.js",
