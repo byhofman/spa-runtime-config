@@ -88,6 +88,23 @@ describe('getConfigurationValue', () => {
         )
     })
 
+    it('requests /application.config.json for the default basePath (no protocol-relative //)', async () => {
+        mockAxiosResponse({ apiUrl: 'https://example.com' })
+
+        await getConfigurationValue<string>('apiUrl')
+
+        expect(axios.get).toHaveBeenCalledWith('/application.config.json', expect.anything())
+        expect(axios.get).toHaveBeenCalledWith('/application.config.local.json', expect.anything())
+    })
+
+    it('strips a trailing slash from basePath instead of producing a double slash', async () => {
+        mockAxiosResponse({ apiUrl: 'https://example.com' })
+
+        await getConfigurationValue<string>('apiUrl', '/config/')
+
+        expect(axios.get).toHaveBeenCalledWith('/config/application.config.json', expect.anything())
+    })
+
     it('ignores a config file that returns non-json content-type', async () => {
         vi.spyOn(console, 'warn').mockImplementation(() => {})
         vi.mocked(axios.get).mockResolvedValue({

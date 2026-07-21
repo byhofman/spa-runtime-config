@@ -4,8 +4,8 @@ type Config = Record<string, unknown>
 
 const SESSION_KEY_SUFFIX = '-config'
 
-export async function getConfigurationValue<T>(key: string, basePath: string = '/'): Promise<T> {
-    const config = await loadAppConfiguration(basePath)
+export async function getConfigurationValue<T>(key: string, basePath = '/'): Promise<T> {
+    const config = await loadAppConfiguration(normalizeBasePath(basePath))
     const value = getDeep(config, key)
 
     if (value === undefined) {
@@ -15,8 +15,12 @@ export async function getConfigurationValue<T>(key: string, basePath: string = '
     return value as T
 }
 
-export function clearConfigCache(basePath: string = '/'): void {
-    sessionStorage.removeItem(`${basePath}${SESSION_KEY_SUFFIX}`)
+export function clearConfigCache(basePath = '/'): void {
+    sessionStorage.removeItem(`${normalizeBasePath(basePath)}${SESSION_KEY_SUFFIX}`)
+}
+
+function normalizeBasePath(basePath: string): string {
+    return basePath.replace(/\/+$/, '')
 }
 
 function getDeep(obj: Config, path: string): unknown {
